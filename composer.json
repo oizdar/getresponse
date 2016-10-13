@@ -1,0 +1,22 @@
+{
+    "name": "oizdar/getresponse",
+    "description": "Library for GetResponse API v3.",
+    "version": "0.0.1",
+    "homepage": "https://github.com/oizdar/getresponse.git",
+    "keywords": ["GetResponse", "api", "email"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Radosław Malinowski",
+            "email": "malinowski.rad@gmail.com"
+        },
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "ext-curl": "*"
+    },
+    "autoload": {
+        "files": ["GetResponse.php"]
+    }
+}
