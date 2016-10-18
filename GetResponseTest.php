@@ -48,8 +48,8 @@ class GetResponseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Doesn't work ?? UNPARSABLE JSON BODY?
-     *
+     * Doesn't work ?? Error: UNPARSABLE JSON BODY?
+     * @todo  repair when understand
     {
         $accountValues = [
             'firstName'=> 'John',
@@ -72,7 +72,8 @@ class GetResponseTest extends \PHPUnit_Framework_TestCase
     /**
      * Tests Adding Campaign. Cannot remove campaign by API, Can you do this only
      * on GetResponse Website. In Account Settings. Uncoment only when sure.
-     *
+     */
+    /*
     public function testAddCampaign()
     {
         $params = [
@@ -87,11 +88,30 @@ class GetResponseTest extends \PHPUnit_Framework_TestCase
         $this->getresponse->addCampaign($params);
         $this->assertEquals(201, $this->getresponse->getHttpStatus());
 
-    }*/
+    }
+    */
+
+    /*
+     * If Your account have any campaing tests also another methods
+     */
     public function testGetCampaigns()
     {
         $this->getresponse->getCampaigns();
         $this->assertEquals(200, $this->getresponse->getHttpStatus());
-        $this->assertGreaterThan(0, count($this->getresponse->returnResponse()));
+
+        $response = $this->getresponse->returnResponse();
+        if (count($response) > 0) {
+            $campaign = $response[0];
+            $this->getresponse->getCampaign($campaign->campaignId);
+            $this->assertEquals(200, $this->getresponse->getHttpStatus());
+            $params = [
+                'query' => ['name' => $campaign->name],
+                'fields' => 'name,isDefault',
+            ];
+            $this->getresponse->searchCampaigns($params);
+            $this->assertEquals(200, $this->getresponse->getHttpStatus());
+            $campaign = $this->getresponse->returnResponse(false)[0];
+            $this->assertEquals(3, count($campaign));
+        }
     }
 }

@@ -13,13 +13,14 @@
     private $domain = null;
 
     /**
-     * Http Status code last request
+     * Http-Status code of last request
      * @var int
      */
     private $httpStatus;
 
     /**
-     * Array of JSON encoded responses
+     * JSON encoded response
+     *
      * @var array of strings
      */
     private $response;
@@ -44,13 +45,13 @@
         }
     }
 
-    public function ping()
+    public function ping() : bool
     {
         $this->getAccounts();
         return ($this->httpStatus === 200) ? true : false;
     }
 
-    public function getAccounts()
+    public function getAccounts() : void
     {
         $this->call('accounts');
     }
@@ -73,19 +74,47 @@
      *
      * @todo  Check and repair
      */
-    public function addAccount(array $params)
+    public function addAccount(array $params) : void
     {
         //$this->call('accounts', 'POST', $params);
     }
 
-    public function addCampaign($params)
+    /**
+     * Adds a campaign
+     * @see  https://apidocs.getresponse.com/v3/resources/campaigns#campaigns.create
+     * @param array $params
+     */
+    public function addCampaign(array $params) : void
     {
         $this->call('campaigns', 'POST', $params);
     }
 
-    public function getCampaigns()
+    /**
+     * Set response as Campaign by Id
+     * @param  string $id
+     */
+    public function getCampaign(string $id) : void
+    {
+        $this->call('campaigns', 'GET', ['id' => $id]);
+    }
+
+    /**
+     * Set response as all Campaigns
+     */
+    public function getCampaigns() : void
     {
         $this->call('campaigns');
+    }
+
+    /**
+     * Search Campaigns by $params
+     * @param  array $params
+     * @see  https://apidocs.getresponse.com/v3/resources/campaigns#campaigns.get.all
+     * @return
+     */
+    public function searchCampaigns($params)
+    {
+        $this->call('campaigns', 'GET', $params);
     }
 
 
@@ -104,45 +133,50 @@
         string $method,
         string $httpMethod = 'GET',
         array $params = []
-    ) {
+    ) : void {
         if (empty($method)) {
             $this->httpStatus = 400;
-            return [
+            $response = [
                 'httpStatus' => '400',
                 'code' => '1010',
                 'codeDescription' => 'Error in external resources',
                 'message' => 'Invalid api method'
             ];
+        } else {
+
+            $url = $this->apiUrl . '/' . $method;
+            $options = [
+                CURLOPT_URL => $url,
+                CURLOPT_HEADER => false,
+                CURLOPT_HTTPHEADER => ['X-Auth-Token: api-key ' . $this->apiKey, 'Content-Type: application/json'],
+                CURLOPT_RETURNTRANSFER => true,
+
+            ];
+
+            if ($httpMethod === 'POST') {
+                $options[CURLOPT_POST] = true;
+                $json = json_encode($params);
+                var_dump($json);
+                $options[CURLOPT_POSTFIELDS] = $json;
+            } else if ($httpMethod === 'DELETE') {
+                $options[CURLOPT_CUSTOMREQUEST] = 'DELETE';
+            }
+            if (isset($params) && !empty($params)) {
+                if(isset($params['id'])) {
+                    $options[CURLOPT_URL] .= '/' . $params['id'];
+                    unset($params['id']);
+                }
+                    $options[CURLOPT_URL] .= '?' . http_build_query($params);
+            }
+
+            $resource = curl_init();
+            curl_setopt_array($resource, $options);
+
+            $response = curl_exec($resource);
+            $this->httpStatus = curl_getinfo($resource, CURLINFO_HTTP_CODE);
+
+            curl_close($resource);
         }
-
-        $url = $this->apiUrl . '/' . $method;
-        $options = [
-            CURLOPT_URL => $url,
-            CURLOPT_HEADER => false,
-            CURLOPT_HTTPHEADER => ['X-Auth-Token: api-key ' . $this->apiKey, 'Content-Type: application/json'],
-            CURLOPT_RETURNTRANSFER => true,
-
-        ];
-
-        if ($httpMethod === 'POST') {
-            $options[CURLOPT_POST] = true;
-            $json = json_encode($params);
-            var_dump($json);
-            $options[CURLOPT_POSTFIELDS] = $json;
-        } elseif ($httpMethod === 'GET') {
-            // set query with params
-        } elseif ($httpMethod === 'DELETE') {
-            $options[CURLOPT_CUSTOMREQUEST] = 'DELETE';
-        }
-
-        $resource = curl_init();
-        curl_setopt_array($resource, $options);
-
-        $response = curl_exec($resource);
-        $this->httpStatus = curl_getinfo($resource, CURLINFO_HTTP_CODE);
-
-        curl_close($resource);
-
         $this->response = $response;
     }
 
