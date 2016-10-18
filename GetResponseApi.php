@@ -117,6 +117,27 @@
         $this->call('campaigns', 'GET', $params);
     }
 
+    /**
+     * Get Campaign Contacts
+     * Test is checked when you have at least one campaign
+     * @param  string $id     ID of selected Campaign
+     * @param  array $params  Search criteria and other parameters
+     */
+    public function getCampaignContacts(string $id, array $params) : void
+    {
+        $this->call('campaigns/'.$id.'/contacts', 'GET', $params);
+    }
+
+    /**
+     * Get Campaign Contacts
+     * Test is checked when you have at least one campaign
+     * @param  string $id     ID of selected Campaign
+     * @param  array $params  Search criteria and other parameters
+     */
+    public function getCampaignBlacklist(string $id, array $params) : void
+    {
+        $this->call('campaigns/'.$id.'/blacklists', 'GET', $params);
+    }
 
     /**
      * cURL Call

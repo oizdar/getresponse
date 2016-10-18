@@ -114,4 +114,29 @@ class GetResponseTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals(3, count($campaign));
         }
     }
+
+
+    public function testGetCampaignContacts()
+    {
+         $this->getresponse->getCampaigns();
+         $response = $this->getresponse->returnResponse();
+         if (count($response) > 0) {
+            $campaign = $response[3];
+            $params = ['fields' => 'createdOn,email'];
+            $this->getresponse->getCampaignContacts($campaign->campaignId, $params);
+            $this->assertEquals(200, $this->getresponse->getHttpStatus());
+        }
+    }
+
+    public function testGetCampaignBlacklist()
+    {
+         $this->getresponse->getCampaigns();
+         $response = $this->getresponse->returnResponse();
+         if (count($response) > 0) {
+            $campaign = $response[3];
+            $params = ['fields' => 'createdOn,email'];
+            $this->getresponse->getCampaignBlacklist($campaign->campaignId, $params);
+            $this->assertEquals(200, $this->getresponse->getHttpStatus());
+        }
+    }
 }
