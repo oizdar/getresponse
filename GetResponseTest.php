@@ -121,22 +121,48 @@ class GetResponseTest extends \PHPUnit_Framework_TestCase
          $this->getresponse->getCampaigns();
          $response = $this->getresponse->returnResponse();
          if (count($response) > 0) {
-            $campaign = $response[3];
+            $campaign = $response[0];
             $params = ['fields' => 'createdOn,email'];
             $this->getresponse->getCampaignContacts($campaign->campaignId, $params);
             $this->assertEquals(200, $this->getresponse->getHttpStatus());
         }
     }
 
-    public function testGetCampaignBlacklist()
+    public function testGetCampaignBlacklists()
     {
          $this->getresponse->getCampaigns();
          $response = $this->getresponse->returnResponse();
          if (count($response) > 0) {
-            $campaign = $response[3];
+            $campaign = $response[0];
             $params = ['fields' => 'createdOn,email'];
-            $this->getresponse->getCampaignBlacklist($campaign->campaignId, $params);
+            $this->getresponse->getCampaignBlacklists($campaign->campaignId, $params);
             $this->assertEquals(200, $this->getresponse->getHttpStatus());
+        }
+    }
+
+    /**
+     * Test remove current blacklist uncomment only when sure
+     */
+    public function testUpdateBlacklists()
+    {
+        $this->getresponse->getCampaigns();
+         $response = $this->getresponse->returnResponse();
+         if (count($response) > 0) {
+            $campaign = $response[0];
+            $masks = ['@example.com', 'test@example.com'];
+            $this->getresponse->updateBlacklists($campaign->campaignId, $masks);
+            $blacklist = $this->getresponse->returnResponse();
+            $this->assertEquals(200, $this->getresponse->getHttpStatus());
+
+            $this->getresponse->getCampaignBlacklists($campaign->campaignId);
+            $this->assertEquals(200, $this->getresponse->getHttpStatus());
+
+            $blacklist = $this->getresponse->returnResponse(false);
+            $this->assertEquals($blacklist['masks'], $masks);
+            $this->getresponse->updateBlacklists($campaign->campaignId); // set empty
+            $this->assertEquals(200, $this->getresponse->getHttpStatus());
+            $blacklist = $this->getresponse->returnResponse(false);
+            $this->assertEquals($blacklist, []);
         }
     }
 }

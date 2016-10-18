@@ -123,22 +123,35 @@
      * @param  string $id     ID of selected Campaign
      * @param  array $params  Search criteria and other parameters
      */
-    public function getCampaignContacts(string $id, array $params) : void
+    public function getCampaignContacts(string $id, array $params = []) : void
     {
         $this->call('campaigns/'.$id.'/contacts', 'GET', $params);
     }
 
     /**
-     * Get Campaign Contacts
+     * Get Campaign Blacklists
      * Test is checked when you have at least one campaign
      * @param  string $id     ID of selected Campaign
      * @param  array $params  Search criteria and other parameters
      */
-    public function getCampaignBlacklist(string $id, array $params) : void
+    public function getCampaignBlacklists(string $id, array $params = []) : void
     {
-        $this->call('campaigns/'.$id.'/blacklists', 'GET', $params);
+        $this->call('campaigns/' . $id . '/blacklists', 'GET', $params);
     }
 
+    /**
+     * This request allows to update blacklist. You need to send full list.
+     * It just replace current content with whatever will be send in this request.
+     * @param  array $masks
+     */
+    public function updateBlacklists(string $id, array $blacklist = []) : void
+    {
+        $this->call(
+            'campaigns/' . $id . '/blacklists',
+            'POST',
+            ['masks' => $blacklist]
+        );
+    }
     /**
      * cURL Call
      * Sets object values with received data (::httpStatus, ::response)
@@ -177,7 +190,6 @@
             if ($httpMethod === 'POST') {
                 $options[CURLOPT_POST] = true;
                 $json = json_encode($params);
-                var_dump($json);
                 $options[CURLOPT_POSTFIELDS] = $json;
             } else if ($httpMethod === 'DELETE') {
                 $options[CURLOPT_CUSTOMREQUEST] = 'DELETE';
