@@ -1,12 +1,12 @@
-    <?php
+<?php
 
-    class GetResponseApi
-    {
+class GetResponseApi
+{
     /**
      * GetResponse autentication parameters
      * @var  string $apiKey
      * @var  string $apiUrl
-     * @var  string $domain 	customer domain (enterprise account users)
+     * @var  string $domain customer domain (enterprise account users)
      */
     private $apiKey;
     private $apiUrl = 'https://api.getresponse.com/v3';
@@ -34,8 +34,8 @@
         string $apiKey,
         string $apiUrl = null,
         string $domain = null
-        ) {
-            $this->apiKey = $apiKey;
+    ) {
+        $this->apiKey = $apiKey;
 
         if (!empty($apiUrl)) {
             $this->apiUrl = $apiUrl;
@@ -195,11 +195,11 @@
                 $options[CURLOPT_CUSTOMREQUEST] = 'DELETE';
             }
             if (isset($params) && !empty($params)) {
-                if(isset($params['id'])) {
+                if (isset($params['id'])) {
                     $options[CURLOPT_URL] .= '/' . $params['id'];
                     unset($params['id']);
                 }
-                    $options[CURLOPT_URL] .= '?' . http_build_query($params);
+                $options[CURLOPT_URL] .= '?' . http_build_query($params);
             }
 
             $resource = curl_init();
@@ -224,12 +224,12 @@
     /**
      * Returns last call Response
      *
-     * @param  boolean $object  	For true returns splObject otherwise array
-     * @return stdClass|array 	Response as array or object
+     * @param  boolean $object  For true returns splObject otherwise array
+     * @return stdClass|array   Response as array or object
      */
     public function returnResponse(bool $object = true)
     {
-        if($object) {
+        if ($object) {
             $response = (isset($this->response))
                 ? json_decode($this->response)
                 : new StdClass();

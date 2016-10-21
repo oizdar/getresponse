@@ -1,5 +1,4 @@
 <?php
-
 require('GetResponseApi.php');
 
 /** File with defined const API_KEY  */
@@ -118,9 +117,9 @@ class GetResponseTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCampaignContacts()
     {
-         $this->getresponse->getCampaigns();
-         $response = $this->getresponse->returnResponse();
-         if (count($response) > 0) {
+        $this->getresponse->getCampaigns();
+        $response = $this->getresponse->returnResponse();
+        if (count($response) > 0) {
             $campaign = $response[0];
             $params = ['fields' => 'createdOn,email'];
             $this->getresponse->getCampaignContacts($campaign->campaignId, $params);
@@ -130,9 +129,9 @@ class GetResponseTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCampaignBlacklists()
     {
-         $this->getresponse->getCampaigns();
-         $response = $this->getresponse->returnResponse();
-         if (count($response) > 0) {
+        $this->getresponse->getCampaigns();
+        $response = $this->getresponse->returnResponse();
+        if (count($response) > 0) {
             $campaign = $response[0];
             $params = ['fields' => 'createdOn,email'];
             $this->getresponse->getCampaignBlacklists($campaign->campaignId, $params);
@@ -146,8 +145,8 @@ class GetResponseTest extends \PHPUnit_Framework_TestCase
     public function testUpdateBlacklists()
     {
         $this->getresponse->getCampaigns();
-         $response = $this->getresponse->returnResponse();
-         if (count($response) > 0) {
+        $response = $this->getresponse->returnResponse();
+        if (count($response) > 0) {
             $campaign = $response[0];
             $masks = ['@example.com', 'test@example.com'];
             $this->getresponse->updateBlacklists($campaign->campaignId, $masks);
